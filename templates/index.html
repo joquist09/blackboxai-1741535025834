@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+
+{% block title %}Find Tennis Courts{% endblock %}
+
+{% block extra_head %}
+<style>
+    #map {
+        height: 500px !important;
+        width: 100% !important;
+        border-radius: 0.5rem;
+        position: relative !important;
+        z-index: 1;
+    }
+    .leaflet-container {
+        height: 100%;
+        width: 100%;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+    <!-- Header -->
+    <div class="text-center">
+        <h1 class="text-3xl font-bold text-gray-900 sm:text-4xl">
+            Find Tennis Courts Near You
+        </h1>
+        <p class="mt-3 max-w-2xl mx-auto text-xl text-gray-500 sm:mt-4">
+            Book a court or set up a match with other players in your area
+        </p>
+    </div>
+
+    <!-- Search and Map Container -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Search and Courts List -->
+        <div class="lg:col-span-1 space-y-4">
+            <!-- Search Box -->
+            <div class="bg-white shadow rounded-lg p-4">
+                <div class="space-y-4">
+                    <h2 class="text-lg font-medium text-gray-900">Search Location</h2>
+                    <div class="relative">
+                        <input type="text" 
+                               id="location-search"
+                               class="search-input block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                               placeholder="Enter your location">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="fas fa-search text-gray-400"></i>
+                        </div>
+                    </div>
+                    <button onclick="getUserLocation()" 
+                            class="location-button w-full flex justify-center items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                        <i class="fas fa-location-arrow mr-2"></i>
+                        Use My Location
+                    </button>
+                </div>
+            </div>
+
+            <!-- Courts List -->
+            <div id="courts-list" class="bg-white shadow rounded-lg p-4 space-y-4">
+                <h2 class="text-lg font-medium text-gray-900">Available Courts</h2>
+                <div id="courts-container" class="space-y-4">
+                    <!-- Courts will be dynamically added here -->
+                    <div class="text-center text-gray-500 py-4">
+                        <div class="loading-spinner"></div>
+                        <p class="mt-2">Loading courts...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Map -->
+        <div class="lg:col-span-2">
+            <div class="bg-white shadow rounded-lg p-4">
+                <div id="map" style="height: 500px; width: 100%; position: relative;"></div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<!-- Leaflet JS -->
+<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js" integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA==" crossorigin=""></script>
+<!-- Custom Map JS -->
+<script src="{{ url_for('static', filename='js/map.js') }}"></script>
+{% endblock %}
