@@ -1,0 +1,171 @@
+{% extends "base.html" %}
+
+{% block title %}Book Court - {{ court.name }}{% endblock %}
+
+{% block extra_head %}
+<!-- Flatpickr for datetime picker -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<style>
+    .time-slot {
+        transition: all 0.3s ease;
+    }
+    .time-slot:hover {
+        transform: scale(1.02);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto">
+    <!-- Court Details Header -->
+    <div class="bg-white shadow rounded-lg overflow-hidden mb-6">
+        <div class="px-6 py-8">
+            <h1 class="text-3xl font-bold text-gray-900">{{ court.name }}</h1>
+            <p class="mt-2 text-gray-600">{{ court.address }}</p>
+            <div class="mt-4 flex items-center">
+                <span class="text-2xl font-bold text-indigo-600">${{ court.price_per_hour }}/hour</span>
+                <span class="ml-2 text-sm text-gray-500">per court</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Booking Form -->
+    <div class="bg-white shadow rounded-lg overflow-hidden">
+        <div class="px-6 py-8">
+            <h2 class="text-2xl font-bold text-gray-900 mb-6">Book Your Court</h2>
+            
+            <form method="POST" class="space-y-6">
+                <!-- Date and Time Selection -->
+                <div>
+                    <label for="booking_time" class="block text-sm font-medium text-gray-700">
+                        Select Date and Time
+                    </label>
+                    <div class="mt-1">
+                        <input type="text" 
+                               name="booking_time" 
+                               id="booking_time"
+                               required
+                               class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                               placeholder="Select date and time">
+                    </div>
+                </div>
+
+                <!-- Duration Selection -->
+                <div>
+                    <label for="duration" class="block text-sm font-medium text-gray-700">
+                        Duration
+                    </label>
+                    <div class="mt-1">
+                        <select name="duration" 
+                                id="duration" 
+                                required
+                                class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 rounded-md sm:text-sm">
+                            <option value="60">1 hour</option>
+                            <option value="90">1.5 hours</option>
+                            <option value="120">2 hours</option>
+                            <option value="180">3 hours</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Price Calculator -->
+                <div class="bg-gray-50 rounded-lg p-4">
+                    <h3 class="text-lg font-medium text-gray-900">Price Breakdown</h3>
+                    <div class="mt-4 space-y-2">
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-600">Court rental</span>
+                            <span class="text-gray-900 font-medium" id="rental-price">$0</span>
+                        </div>
+                        <div class="border-t border-gray-200 pt-2 flex justify-between items-center">
+                            <span class="text-base font-medium text-gray-900">Total</span>
+                            <span class="text-xl font-bold text-indigo-600" id="total-price">$0</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Submit Button -->
+                <div class="flex justify-end">
+                    <button type="submit"
+                            class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                        <i class="fas fa-check mr-2"></i>
+                        Confirm Booking
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Court Rules and Information -->
+    <div class="mt-6 bg-white shadow rounded-lg overflow-hidden">
+        <div class="px-6 py-8">
+            <h2 class="text-xl font-bold text-gray-900 mb-4">Court Rules & Information</h2>
+            <div class="space-y-4">
+                <div class="flex items-start">
+                    <div class="flex-shrink-0">
+                        <i class="fas fa-clock text-indigo-600"></i>
+                    </div>
+                    <div class="ml-3">
+                        <h3 class="text-sm font-medium text-gray-900">Cancellation Policy</h3>
+                        <p class="mt-1 text-sm text-gray-600">Free cancellation up to 24 hours before your booking</p>
+                    </div>
+                </div>
+                <div class="flex items-start">
+                    <div class="flex-shrink-0">
+                        <i class="fas fa-tennis-ball text-indigo-600"></i>
+                    </div>
+                    <div class="ml-3">
+                        <h3 class="text-sm font-medium text-gray-900">Equipment</h3>
+                        <p class="mt-1 text-sm text-gray-600">Tennis balls and rackets available for rent at additional cost</p>
+                    </div>
+                </div>
+                <div class="flex items-start">
+                    <div class="flex-shrink-0">
+                        <i class="fas fa-info-circle text-indigo-600"></i>
+                    </div>
+                    <div class="ml-3">
+                        <h3 class="text-sm font-medium text-gray-900">Court Surface</h3>
+                        <p class="mt-1 text-sm text-gray-600">Hard court surface, suitable for all skill levels</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<!-- Flatpickr -->
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script>
+    // Initialize datetime picker
+    flatpickr("#booking_time", {
+        enableTime: true,
+        minTime: "06:00",
+        maxTime: "22:00",
+        minDate: "today",
+        dateFormat: "Y-m-d H:i",
+        disable: [
+            function(date) {
+                // Disable dates in the past
+                return date < new Date();
+            }
+        ]
+    });
+
+    // Calculate and update price
+    function updatePrice() {
+        const duration = parseInt(document.getElementById('duration').value);
+        const pricePerHour = parseFloat("{{ court.price_per_hour }}");
+        const rentalPrice = (duration / 60) * pricePerHour;
+        
+        document.getElementById('rental-price').textContent = `$${rentalPrice.toFixed(2)}`;
+        document.getElementById('total-price').textContent = `$${rentalPrice.toFixed(2)}`;
+    }
+
+    // Add event listeners
+    document.getElementById('duration').addEventListener('change', updatePrice);
+    
+    // Initial price calculation
+    updatePrice();
+</script>
+{% endblock %}
